@@ -144,6 +144,7 @@ express()
              } )
             }
             else {
+              console.log( 'no stations found???' );
               appRes.json( { error: 'error?' } );
             }
           } );
