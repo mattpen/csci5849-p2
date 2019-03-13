@@ -56,7 +56,7 @@ const get = url => new Promise((resolve, reject) => {
 
 
 const findStation = ( appReq, bikeData ) => {
-  const targetName =  appReq.body.queryResult.parameters.StationName;
+  const targetName =  appReq.body.queryResult.parameters.station;
   return bikeData.network.stations.find( s => s.name.toLowerCase() === targetName.toLowerCase() );
 }
 
@@ -77,6 +77,12 @@ express()
         if ( intent === 'numbikes' ) {
           const station = findStation( appReq, bikeData );
           appRes.json( {fulfillmentText: `There are ${ station.free_bikes } bikes available at ${ station.name }` } )
+        }
+
+        else if ( intent === 'numbikes-station' ) {
+          console.log( appReq.body.queryResult.outputContexts );
+          appRes.json( {fulfillmentText: 'fix me!'});
+          // appRes.json( {fulfillmentText: `There are ${ station.free_bikes } bikes available at ${ station.name }` } )
         }
 
         else if ( intent === 'numslots' ) {
