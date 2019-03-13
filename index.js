@@ -89,31 +89,33 @@ express()
           let shortestDistance = Infinity;
           let nearestStation = '';
           let stationsChecked = 0;
-          bikeData.network.stations.forEach( async station => {
-            
-          } );
+
+
+          const processStation = async ( station, resolve, reject ) => {
+            try {
+              const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
+              const directionRes = await get( `https://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
+              directionsData = JSON.parse( directionRes );
+              if ( directionsData.route.distance < shortestDistance ) {
+                shortestDistance = directionsData.route.distance;
+                nearestStation = station;
+              }
+              resolve();
+            } 
+            catch ( e ) { 
+              console.error( e );
+              resolve();
+            }
+          }
 
           let requests = bikeData.network.stations.map( async station => {
               return new Promise( ( resolve, reject ) => {
-                try {
-                  const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
-                  const directionRes = await get( `https://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
-                  console.log( directionRes );
-                  directionsData = JSON.parse( directionRes );
-                  if ( directionsData.route.distance < shortestDistance ) {
-                    shortestDistance = directionsData.route.distance;
-                    nearestStation = station;
-                  }
-                  resolve();
-                } 
-                catch ( e ) { 
-                  console.error( e );
-                  resolve();
-                }
+                processStation( station, resolve, reject )
               } );
           } );
 
           Promise.all( requests ).then( () => {
+            console.log( 'requests finished' );
             if ( shortestDistance < Infinity ) {
               appRes.json( { fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.` } )
             }
