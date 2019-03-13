@@ -93,15 +93,15 @@ express()
           bikeData.network.stations.forEach( async station => {
             const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
             try {
-              await directionRes = get( `http://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
+              const directionRes = await get( `http://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
+              console.log( directionRes );
+              directionsData = JSON.parse( directionRes );
+              if ( directionsData.route.distance < shortestDistance ) {
+                shortestDistance = directionsData.route.distance;
+                nearestStation = station;
+              }
             } 
             catch ( e ) { console.error( e ); }
-            console.log( directionRes );
-            directionsData = JSON.parse( directionRes );
-            if ( directionsData.route.distance < shortestDistance ) {
-              shortestDistance = directionsData.route.distance;
-              nearestStation = station;
-            }
           } );
 
           if ( shortestDistance < Infinity ) {
