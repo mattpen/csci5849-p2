@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5000;
 const MQ_API_KEY = process.env.MQ_API_KEY || 'KEY';
 
 const buildLocationSearchString  = location => {
+  console.log( location );
   let string = '';
 
   if ( location[ 'business-name' ] ) {
