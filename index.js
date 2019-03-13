@@ -110,10 +110,6 @@ express()
               const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
               const directionRes = await get( `https://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
               directionsData = JSON.parse( directionRes );
-              console.log( 'distance to ' + station.name + ' is ' + directionsData.route.distance );
-              if ( !directionsData.route.distance ) {
-                console.log( directionsData );
-              }
               if ( directionsData.route.distance < shortestDistance ) {
                 shortestDistance = directionsData.route.distance;
                 nearestStation = station;
@@ -139,7 +135,7 @@ express()
                 fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.`,
                 outputContexts: [
                   {
-                    name: `projects/find-a-bike/agent/sessions/1234/contexts/station-found`,
+                    name: 'projects/find-a-bike/agent/sessions/1234/contexts/station-found',
                     lifespanCount: 100,
                     parameters: { station: nearestStation.name }
                   }
@@ -147,8 +143,21 @@ express()
              } )
             }
             else {
-              console.log( 'no stations found???' );
-              appRes.json( { error: 'error?' } );
+              appRes.json( { 
+                fulfillmentText: 'Sorry, I either couldn\'t find that location or it isn\'t close to any bike stations.',
+                outputContexts: [
+                  {
+                    name: 'projects/find-a-bike/agent/sessions/1234/contexts/station-found',
+                    lifespanCount: 0,
+                    parameters: {}
+                  },
+                  {
+                    name: 'projects/find-a-bike/agent/sessions/1234/contexts/location-found',
+                    lifespanCount: 0,
+                    parameters: {}
+                  }
+                ]
+              } );
             }
           } );
         }
