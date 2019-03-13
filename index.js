@@ -93,7 +93,9 @@ express()
           bikeData.network.stations.forEach( async station => {
             const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
             try {
-              const directionRes = await get( `http://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
+              const uri = `http://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}`;
+              console.log( uri );
+              const directionRes = await get( uri )
               console.log( directionRes );
               directionsData = JSON.parse( directionRes );
               if ( directionsData.route.distance < shortestDistance ) {
