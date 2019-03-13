@@ -93,7 +93,7 @@ express()
             
           } );
 
-          let requests = bikeData.network.stations.map( station => {
+          let requests = bikeData.network.stations.map( async station => {
               return new Promise( ( resolve, reject ) => {
                 try {
                   const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
