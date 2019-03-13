@@ -14,7 +14,7 @@ express()
         
         const name =  appReq.body.queryResult.parameters.StationName
         console.log('looking for station: ' + name );
-        console.log( d.network.stations );
+        console.log( d.network.stations.length );
         let station;
         for ( let i = 0; i++; i < d.network.stations.length ) {
           console.log('comparing with ' + d.network.stations[i] )
