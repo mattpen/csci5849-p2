@@ -105,10 +105,10 @@ express()
           } );
 
           if ( shortestDistance < Infinity ) {
-            res.json( { fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.` } )
+            appRes.json( { fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.` } )
           }
           else {
-            res.json( { error: 'error?' } );
+            appRes.json( { error: 'error?' } );
           }
         }
     
