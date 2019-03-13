@@ -82,7 +82,7 @@ express()
         else if ( intent === 'numbikes-station' ) {
           console.log( appReq.body.queryResult.outputContexts );
           const context = appReq.body.queryResult.outputContexts.find( c => c.name && c.name.endsWith( 'station-found' ) );
-          const stationName = context.parameters.station;
+          const targetName = context.parameters.station;
           const station = bikeData.network.stations.find( s => s.name.toLowerCase() === targetName.toLowerCase() );
           appRes.json( {fulfillmentText: `There are ${ station.free_bikes } bikes available at ${ station.name }` } )
         }
@@ -95,7 +95,7 @@ express()
         else if ( intent === 'numslots-station' ) {
           console.log( appReq.body.queryResult.outputContexts );
           const context = appReq.body.queryResult.outputContexts.find( c => c.name && c.name.endsWith( 'station-found' ) );
-          const stationName = context.parameters.station;
+          const targetName = context.parameters.station;
           const station = bikeData.network.stations.find( s => s.name.toLowerCase() === targetName.toLowerCase() );
           appRes.json( {fulfillmentText: `There are ${ station.empty_slots } empty slots available at ${ station.name }` } )
         }
