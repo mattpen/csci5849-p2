@@ -64,9 +64,6 @@ express()
   .use( bodyParser.json() )
   .use( bodyParser.urlencoded( { extended: true } ) )
   .post( '/dialog-flow', ( appReq, appRes ) => {
-    
-
-    console.log(appReq.body);
 
     https.get( 'https://api.citybik.es/v2/networks/boulder', bikeRes => {
       bikeRes.on( 'data', bikeData => {
@@ -106,12 +103,14 @@ express()
           let nearestStation = '';
           let stationsChecked = 0;
 
+          console.log( 'searching for nearest station to ' + requestedLocation );
 
           const processStation = async ( station, resolve, reject ) => {
             try {
               const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
               const directionRes = await get( `https://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
               directionsData = JSON.parse( directionRes );
+              console.log( 'distance to ' + station.name + ' is ' + directionsData.route.distance );
               if ( directionsData.route.distance < shortestDistance ) {
                 shortestDistance = directionsData.route.distance;
                 nearestStation = station;
