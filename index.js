@@ -90,7 +90,7 @@ express()
           let shortestDistance = Infinity;
           let nearestStation = '';
           let stationsChecked = 0;
-          bikeData.network.stations.forEach( station => {
+          bikeData.network.stations.forEach( async station => {
             const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
             try {
               await directionRes = get( `http://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
