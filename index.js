@@ -17,7 +17,11 @@ express()
         console.log( d.network.stations.length );
         let station = d.network.stations.find( s => {
           console.log('checking ' + s.name );
-          s.name.toLowerCase() === name;
+          const truth = s.name.toLowerCase() === name;
+          if ( truth ) {
+            console.log('matched');
+          }
+          return truth;
         } );
         
         //let station = d.network.stations.find( s => s.name.toLowerCase() === appReq.body.queryResult.parameters.StationName );
