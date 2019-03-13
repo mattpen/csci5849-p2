@@ -123,7 +123,7 @@ express()
                   {
                     name: `projects/find-a-bike/agent/sessions/1234/contexts/station-found`,
                     lifespanCount: 100,
-                    parameters: { station: station.name }
+                    parameters: { station: nearestStation.name }
                   }
                 ]
              } )
