@@ -17,7 +17,7 @@ express()
         console.log( d.network.stations.length );
         let station = d.network.stations.find( s => {
           console.log('checking ' + s.name );
-          const truth = s.name.toLowerCase() === name;
+          const truth = s.name.toLowerCase() === name.toLowerCase();
           if ( truth ) {
             console.log('matched');
           }
