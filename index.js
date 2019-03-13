@@ -4,6 +4,43 @@ const https = require( 'https' );
 const PORT = process.env.PORT || 5000;
 const MQ_API_KEY = process.env.MQ_API_KEY || 'KEY';
 
+const buildLocationSearchString  = location => {
+  let string = '';
+
+  if ( location[ 'business-name' ] ) {
+    string += location[ 'business-name' ]
+  }
+
+  if ( location[ 'street-address' ] ) {
+    string += ' ' + location[ 'street-address' ]
+  }
+
+  if ( location[ 'city' ] ) {
+    string += ' ' + location[ 'city' ]
+  }
+
+  if ( !location[ 'city' ] && location[ 'subadmin-area' ]) {
+    string += ' ' + location[ 'subadmin-area' ]
+  }
+  
+  if ( location[ 'state' ] ) {  
+    if ( location[ 'city' ] || location[ 'subadmin-area' ]) {
+      string += ',';
+    }
+    string += ' ' + location[ 'state' ]
+  }
+
+  if ( location[ 'zip-code' ] ) {
+    string += ' ' + location[ 'zip-code' ]
+  }
+
+  if ( location[ 'country' ] ) {
+    string += ' ' + location[ 'country' ]
+  }
+
+  return string.trim();
+}
+
 const findStation = ( appReq, bikeData ) => {
   const targetName =  appReq.body.queryResult.parameters.StationName;
   return bikeData.network.stations.find( s => s.name.toLowerCase() === targetName.toLowerCase() );
