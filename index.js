@@ -11,12 +11,19 @@ express()
     https.get( 'https://api.citybik.es/v2/networks/boulder', bikeRes => {
       bikeRes.on( 'data', d => {
         d = JSON.parse( d );
-        let station = d.network.stations.find( s => s.id === '974444d749237ed7552167e388dd2210' );
-        if ( appReq.body.queryResult.intent.displayName === 'numbikes' ) {
-          appRes.json( {fulfillmentText: `There are ${ station.free_bikes } bikes available at ${ station.name }` } )
+        
+        let station = d.network.stations.find( s => s.name.toLowerCase() === appReq.body.queryResult.parameters.StationName );
+        
+        if ( station !== null ) {
+          if ( appReq.body.queryResult.intent.displayName === 'numbikes' ) {
+            appRes.json( {fulfillmentText: `There are ${ station.free_bikes } bikes available at ${ station.name }` } )
+          }
+          else if ( appReq.body.queryResult.intent.displayName === 'numslots' ) {
+            appRes.json( {fulfillmentText: `There are ${ station.empty_slots } empty slots available at ${ station.name }` } )
+          }
         }
-        else if ( appReq.body.queryResult.intent.displayName === 'numslots' ) {
-          appRes.json( {fulfillmentText: `There are ${ station.empty_slots } empty slots available at ${ station.name }` } )
+        else {
+          console.error( 'oops, station not found' );
         }
       } );
     } ).on( 'error', e => {
