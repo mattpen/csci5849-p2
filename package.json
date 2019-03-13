@@ -1,0 +1,24 @@
+{
+  "name": "csci5849-a6",
+  "version": "0.1.0",
+  "description": "Boulder BCycle Bike station query service",
+  "engines": {
+    "node": "10.x"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.15.2",
+    "https": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-js-getting-started"
+  },
+  "keywords": [],
+  "license": "MIT"
+}
