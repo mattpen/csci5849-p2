@@ -81,7 +81,7 @@ express()
 
         else if ( intent === 'numslots' ) {
           const station = findStation( appReq, bikeData )
-          appRes.json( {fulfillmentText: `There are ${ station.empty_slots } empty slots available at ${ station.name }` } )
+          appRes.json( { fulfillmentText: `There are ${ station.empty_slots } empty slots available at ${ station.name }` } );
         }
 
         else if ( intent === 'findstation-location' ) {
@@ -117,7 +117,16 @@ express()
           Promise.all( requests ).then( () => {
             console.log( 'requests finished' );
             if ( shortestDistance < Infinity ) {
-              appRes.json( { fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.` } )
+              appRes.json( { 
+                fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.`,
+                outputContexts: [
+                  {
+                    name: `projects/find-a-bike/agent/sessions/1234/contexts/station-found`,
+                    lifespanCount: 100,
+                    parameters: { station: station.name }
+                  }
+                ]
+             } )
             }
             else {
               appRes.json( { error: 'error?' } );
