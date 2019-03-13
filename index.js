@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 5000;
 const MQ_API_KEY = process.env.MQ_API_KEY || 'KEY';
 
 const buildLocationSearchString = location => {
-  console.log( location );
   let string = '';
 
   if ( location[ 'business-name' ] ) {
@@ -45,17 +44,16 @@ const buildLocationSearchString = location => {
 }
 
 // wrap a request in an promise
-const get = url => {
-    return new Promise((resolve, reject) => {
-        request(url, (error, response, body) => {
-            if (error) reject(error);
-            if (response.statusCode != 200) {
-                reject('Invalid status code <' + response.statusCode + '>');
-            }
-            resolve(body);
-        });
-    });
-}
+const get = url => new Promise((resolve, reject) => {
+    request(url, (error, response, body) => {
+        if (error) reject(error);
+        if (response.statusCode != 200) {
+            reject('Invalid status code <' + response.statusCode + '>');
+        }
+        resolve(body);
+    } );
+} );
+
 
 const findStation = ( appReq, bikeData ) => {
   const targetName =  appReq.body.queryResult.parameters.StationName;
@@ -92,27 +90,37 @@ express()
           let nearestStation = '';
           let stationsChecked = 0;
           bikeData.network.stations.forEach( async station => {
-            const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
-            try {
-              const uri = `http://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}`;
-              console.log( uri );
-              const directionRes = await get( uri )
-              console.log( directionRes );
-              directionsData = JSON.parse( directionRes );
-              if ( directionsData.route.distance < shortestDistance ) {
-                shortestDistance = directionsData.route.distance;
-                nearestStation = station;
-              }
-            } 
-            catch ( e ) { console.error( e ); }
+            
           } );
 
-          if ( shortestDistance < Infinity ) {
-            appRes.json( { fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.` } )
-          }
-          else {
-            appRes.json( { error: 'error?' } );
-          }
+          let requests = bikeData.network.stations.map( station => {
+              return new Promise( ( resolve, reject ) => {
+                try {
+                  const stationLocation = encodeURIComponent( station.latitude + ',' + station.longitude );
+                  const directionRes = await get( `https://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
+                  console.log( directionRes );
+                  directionsData = JSON.parse( directionRes );
+                  if ( directionsData.route.distance < shortestDistance ) {
+                    shortestDistance = directionsData.route.distance;
+                    nearestStation = station;
+                  }
+                  resolve();
+                } 
+                catch ( e ) { 
+                  console.error( e );
+                  resolve();
+                }
+              } );
+          } );
+
+          Promise.all( requests ).then( () => {
+            if ( shortestDistance < Infinity ) {
+              appRes.json( { fulfillmentText: `The nearest station is ${nearestStation.name} and it is ${shortestDistance} mile walk.` } )
+            }
+            else {
+              appRes.json( { error: 'error?' } );
+            }
+          } );
         }
     
         else {
