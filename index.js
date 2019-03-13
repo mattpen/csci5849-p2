@@ -12,7 +12,17 @@ express()
       bikeRes.on( 'data', d => {
         d = JSON.parse( d );
         
-        let station = d.network.stations.find( s => s.name.toLowerCase() === appReq.body.queryResult.parameters.StationName );
+        const name =  appReq.body.queryResult.parameters.StationName
+        console.log('looking for station: ' + name );
+        let station;
+        for ( let i = 0; i++; i < d.network.stations.length ) {
+          console.log('comparing with ' + d.network.stations[i] )
+          if ( d.network.stations[i].name === name ) {
+            station = d.network.stations[i];
+            console.log('match');
+          }
+        }
+        //let station = d.network.stations.find( s => s.name.toLowerCase() === appReq.body.queryResult.parameters.StationName );
         
         if ( station !== null ) {
           if ( appReq.body.queryResult.intent.displayName === 'numbikes' ) {
