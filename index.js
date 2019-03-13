@@ -6,7 +6,7 @@ const request = require( 'request' );
 const PORT = process.env.PORT || 5000;
 const MQ_API_KEY = process.env.MQ_API_KEY || 'KEY';
 
-const buildLocationSearchString  = location => {
+const buildLocationSearchString = location => {
   console.log( location );
   let string = '';
 
@@ -87,7 +87,7 @@ express()
         }
 
         else if ( intent === 'findstation-location' ) {
-          const requestedLocation = encodeURIComponent( appReq.body.queryResult.parameters.location );
+          const requestedLocation = encodeURIComponent( buildLocationSearchString( appReq.body.queryResult.parameters.location ) );
           let shortestDistance = Infinity;
           let nearestStation = '';
           let stationsChecked = 0;
