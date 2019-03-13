@@ -111,6 +111,9 @@ express()
               const directionRes = await get( `https://www.mapquestapi.com/directions/v2/route?key=${MQ_API_KEY}&routeType=pedestrian&from=${requestedLocation}&to=${stationLocation}` )
               directionsData = JSON.parse( directionRes );
               console.log( 'distance to ' + station.name + ' is ' + directionsData.route.distance );
+              if ( !directionsData.route.distance ) {
+                console.log( directionsData );
+              }
               if ( directionsData.route.distance < shortestDistance ) {
                 shortestDistance = directionsData.route.distance;
                 nearestStation = station;
